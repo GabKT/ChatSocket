@@ -25,16 +25,18 @@ public class Chat {
 
 	public void receiveMessage() throws IOException {
 		DataInputStream dataIn = new DataInputStream(server.getInputStream());
-		while (!this.getExit()) {
+		while (!getExit()) {
 			try {
 				String serverMsg = dataIn.readUTF();
 				System.out.println("Server: " + serverMsg);
 				System.out.println();
-				if (serverMsg.equals("BYE")) {
+				if (serverMsg.trim().equalsIgnoreCase("BYE")) {
 					setExit(true);
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				if (!getExit()) {
+					e.printStackTrace();
+				}
 			}
 		}
 		dataIn.close();
@@ -43,17 +45,19 @@ public class Chat {
 	public void sendMessage() throws IOException {
 		DataOutputStream dataOut = new DataOutputStream(server.getOutputStream());
 		Scanner scan = new Scanner(System.in);
-		while (!this.getExit()) {
+		while (!getExit()) {
 			try {
 				String msg = scan.nextLine();
 				dataOut.writeUTF(msg);
 				System.out.println();
 
 				if (msg.equals("BYE")) {
-					exit = true;
+					setExit(true);
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				if (!getExit()) {
+					e.printStackTrace();
+				}
 			}
 		}
 		scan.close();

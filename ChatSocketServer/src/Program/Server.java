@@ -1,12 +1,10 @@
 package Program;
 
-import java.io.EOFException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 /*
-	- Melhorar o uso de threads, verificar vazamento de recurso
 	- Permitir envio de arquivos
 */
 
@@ -29,28 +27,27 @@ public class Server {
 				try {
 					chat.receiveMessage();
 				} catch (IOException e) {
-					e.printStackTrace();
+					if (!chat.getExit()) {
+						e.printStackTrace();
+					}
 				}
 			});
-
 			Thread t2 = new Thread(() -> {
 				try {
 					chat.sendMessage();
 				} catch (IOException e) {
-					e.printStackTrace();
+					if (!chat.getExit()) {
+						e.printStackTrace();
+					}
 				}
 			});
 
 			t1.start();
 			t2.start();
-
-			while (!chat.getExit()) {
-
-			}
+			t1.join();
+			t2.join();
 			server.close();
 
-		} catch (EOFException e) {
-			System.out.println("Server closed");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
